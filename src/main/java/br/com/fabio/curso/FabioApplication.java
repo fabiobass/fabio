@@ -82,7 +82,7 @@ public class FabioApplication implements CommandLineRunner{
 		
 		Cliente cliente1 = new Cliente(null, "Maria Silva","maria@gmail",
 				"333.452.852-78", TipoCliente.PESSOAFISICA);
-		cliente1.getTelefones().addAll(Arrays.asList("3351-2028","999524171"));
+		cliente1.getTelefones().addAll(Arrays.asList("3351-2028","99952-4171"));
 		
 		Endereco end1 = new Endereco(null,"Rua Floral","300","Ap 402","Jardim","57014-522", cliente1, cidade1);
 		Endereco end2 = new Endereco(null,"Avenida muto","105","Sala 800","Centro","57085-000", cliente1, cidade2);
