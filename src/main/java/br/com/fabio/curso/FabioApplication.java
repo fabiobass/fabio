@@ -9,10 +9,15 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import br.com.fabio.curso.domain.Categoria;
 import br.com.fabio.curso.domain.Cidade;
+import br.com.fabio.curso.domain.Cliente;
+import br.com.fabio.curso.domain.Endereco;
 import br.com.fabio.curso.domain.Estado;
 import br.com.fabio.curso.domain.Produto;
+import br.com.fabio.curso.domain.enums.TipoCliente;
 import br.com.fabio.curso.repositories.CategoriaRepository;
 import br.com.fabio.curso.repositories.CidadeRepository;
+import br.com.fabio.curso.repositories.ClienteRepository;
+import br.com.fabio.curso.repositories.EnderecoRepository;
 import br.com.fabio.curso.repositories.EstadoRepository;
 import br.com.fabio.curso.repositories.ProdutoRepository;
 
@@ -30,6 +35,12 @@ public class FabioApplication implements CommandLineRunner{
 	
 	@Autowired
 	private EstadoRepository estadoRepository;
+	
+	@Autowired
+	private ClienteRepository clienteRepository;
+	
+	@Autowired
+	private EnderecoRepository enderecoRepository;
 	
 	public static void main(String[] args) {
 		SpringApplication.run(FabioApplication.class, args);
@@ -68,6 +79,18 @@ public class FabioApplication implements CommandLineRunner{
 		
 		estadoRepository.saveAll(Arrays.asList(estado1, estado2));
 		cidadeRepository.saveAll(Arrays.asList(cidade1, cidade2, cidade3));
+		
+		Cliente cliente1 = new Cliente(null, "Maria Silva","maria@gmail",
+				"333.452.852-78", TipoCliente.PESSOAFISICA);
+		cliente1.getTelefones().addAll(Arrays.asList("3351-2028","999524171"));
+		
+		Endereco end1 = new Endereco(null,"Rua Floral","300","Ap 402","Jardim","57014-522", cliente1, cidade1);
+		Endereco end2 = new Endereco(null,"Avenida muto","105","Sala 800","Centro","57085-000", cliente1, cidade2);
+		
+		cliente1.getEnderecos().addAll(Arrays.asList(end1, end2));
+		
+		clienteRepository.saveAll(Arrays.asList(cliente1));
+		enderecoRepository.saveAll(Arrays.asList(end1, end2));
 		
 		
 	}
