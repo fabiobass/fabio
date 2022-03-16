@@ -1,5 +1,6 @@
 package br.com.fabio.curso;
 
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,13 +13,20 @@ import br.com.fabio.curso.domain.Cidade;
 import br.com.fabio.curso.domain.Cliente;
 import br.com.fabio.curso.domain.Endereco;
 import br.com.fabio.curso.domain.Estado;
+import br.com.fabio.curso.domain.Pagamento;
+import br.com.fabio.curso.domain.PagamentoComBoleto;
+import br.com.fabio.curso.domain.PagamentoComCartao;
+import br.com.fabio.curso.domain.Pedido;
 import br.com.fabio.curso.domain.Produto;
+import br.com.fabio.curso.domain.enums.EstadoPagamento;
 import br.com.fabio.curso.domain.enums.TipoCliente;
 import br.com.fabio.curso.repositories.CategoriaRepository;
 import br.com.fabio.curso.repositories.CidadeRepository;
 import br.com.fabio.curso.repositories.ClienteRepository;
 import br.com.fabio.curso.repositories.EnderecoRepository;
 import br.com.fabio.curso.repositories.EstadoRepository;
+import br.com.fabio.curso.repositories.PagamentoRepository;
+import br.com.fabio.curso.repositories.PedidoRepository;
 import br.com.fabio.curso.repositories.ProdutoRepository;
 
 @SpringBootApplication
@@ -26,21 +34,20 @@ public class FabioApplication implements CommandLineRunner{
 
 	@Autowired
 	private CategoriaRepository categoriaRepository;
-	
 	@Autowired
 	private ProdutoRepository produtoRepository;
-	
 	@Autowired
 	private CidadeRepository cidadeRepository;
-	
 	@Autowired
 	private EstadoRepository estadoRepository;
-	
 	@Autowired
 	private ClienteRepository clienteRepository;
-	
 	@Autowired
 	private EnderecoRepository enderecoRepository;
+	@Autowired
+	private PedidoRepository pedidoRepository;
+	@Autowired
+	private PagamentoRepository pagamentoRepository;
 	
 	public static void main(String[] args) {
 		SpringApplication.run(FabioApplication.class, args);
@@ -80,17 +87,30 @@ public class FabioApplication implements CommandLineRunner{
 		estadoRepository.saveAll(Arrays.asList(estado1, estado2));
 		cidadeRepository.saveAll(Arrays.asList(cidade1, cidade2, cidade3));
 		
-		Cliente cliente1 = new Cliente(null, "Maria Silva","maria@gmail",
+		Cliente cli1 = new Cliente(null, "Maria Silva","maria@gmail",
 				"333.452.852-78", TipoCliente.PESSOAFISICA);
-		cliente1.getTelefones().addAll(Arrays.asList("3351-2028","99952-4171"));
+		cli1.getTelefones().addAll(Arrays.asList("3351-2028","99952-4171"));
 		
-		Endereco end1 = new Endereco(null,"Rua Floral","300","Ap 402","Jardim","57014-522", cliente1, cidade1);
-		Endereco end2 = new Endereco(null,"Avenida muto","105","Sala 800","Centro","57085-000", cliente1, cidade2);
+		Endereco e1 = new Endereco(null,"Rua Floral","300","Ap 402","Jardim","57014-522", cli1, cidade1);
+		Endereco e2 = new Endereco(null,"Avenida muto","105","Sala 800","Centro","57085-000", cli1, cidade2);
 		
-		cliente1.getEnderecos().addAll(Arrays.asList(end1, end2));
+		cli1.getEnderecos().addAll(Arrays.asList(e1, e2));
 		
-		clienteRepository.saveAll(Arrays.asList(cliente1));
-		enderecoRepository.saveAll(Arrays.asList(end1, end2));
+		clienteRepository.saveAll(Arrays.asList(cli1));
+		enderecoRepository.saveAll(Arrays.asList(e1, e2));
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm");
+		Pedido ped1 = new Pedido(null, sdf.parse("30/09/2017 10:32"), cli1, e1);
+		Pedido ped2 = new Pedido(null, sdf.parse("10/10/2017 19:35"), cli1, e2);
+
+		cli1.getPedidos().addAll(Arrays.asList(ped1, ped2));
+		Pagamento pagto1 = new PagamentoComCartao(null, EstadoPagamento.QUITADO, ped1, 6);
+		ped1.setPagamento(pagto1); 
+		Pagamento pagto2 = new PagamentoComBoleto(null, EstadoPagamento.PENDENTE, ped2, sdf.parse("20/10/2017 00:00"), null);
+		ped2.setPagamento(pagto2);
+		
+		pedidoRepository.saveAll(Arrays.asList(ped1, ped2));
+		pagamentoRepository.saveAll(Arrays.asList(pagto1, pagto2));
 		
 		
 	}
