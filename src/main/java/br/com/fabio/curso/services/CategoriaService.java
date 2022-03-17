@@ -3,10 +3,12 @@ package br.com.fabio.curso.services;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import br.com.fabio.curso.domain.Categoria;
 import br.com.fabio.curso.repositories.CategoriaRepository;
+import br.com.fabio.curso.services.exceptions.DataIntegrityException;
 import br.com.fabio.curso.services.exceptions.ObjectNotFoundException;
 
 @Service
@@ -31,5 +33,17 @@ public class CategoriaService {
 		find(obj.getId());
 		obj.setId(null);
 		return repo.save(obj);
+	}
+	
+	public void delete(Integer id) {
+		try {
+			find(id);
+			repo.deleteById(id);	
+		}
+		catch(DataIntegrityViolationException e){
+			
+			throw new DataIntegrityException("Não é possível excluir "
+					+ "categorias que possui produtos");
+		}
 	}
 }
