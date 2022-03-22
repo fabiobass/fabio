@@ -9,7 +9,7 @@ import org.hibernate.validator.constraints.Length;
 
 import br.com.fabio.curso.domain.Cliente;
 
-public class ClienteDTO implements Serializable{
+public class ClienteDTO implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -20,11 +20,11 @@ public class ClienteDTO implements Serializable{
 	@NotEmpty(message = "Preenchimento obrigatório!")
 	@Email(message = "Email inválido!")
 	private String email;
-	
+
 	public ClienteDTO() {
-		
+
 	}
-	
+
 	public ClienteDTO(Cliente obj) {
 		id = obj.getId();
 		nome = obj.getNome();
