@@ -18,9 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import br.com.fabio.curso.domain.Categoria;
 import br.com.fabio.curso.domain.Cliente;
-import br.com.fabio.curso.dto.CategoriaDTO;
 import br.com.fabio.curso.dto.ClienteDTO;
 import br.com.fabio.curso.dto.ClienteNewDTO;
 import br.com.fabio.curso.services.ClienteService;
@@ -31,64 +29,52 @@ public class ClienteResource {
 
 	@Autowired
 	private ClienteService service;
-	
-	@RequestMapping(value = "/{id}",  method = RequestMethod.GET)
+
+	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
 	public ResponseEntity<Cliente> find(@PathVariable Integer id) {
-		
-		Cliente obj = service.find(id); // find TRADUÇÂO encontrar
+		Cliente obj = service.find(id);
 		return ResponseEntity.ok().body(obj);
 	}
-	
+
 	@RequestMapping(method = RequestMethod.POST)
-	public ResponseEntity<Void> insert(@Valid @RequestBody ClienteNewDTO objDto){
+	public ResponseEntity<Void> insert(@Valid @RequestBody ClienteNewDTO objDto) {
 		Cliente obj = service.fromDTO(objDto);
 		obj = service.insert(obj);
-		URI uri = ServletUriComponentsBuilder
-				.fromCurrentRequest()
-				.path("/{id}")
-				.buildAndExpand(obj.getId())
-				.toUri();
-		return ResponseEntity.created(uri).build();		
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
+		return ResponseEntity.created(uri).build();
 	}
-	
-	@RequestMapping(value = "/{id}",  method = RequestMethod.PUT)
-	public ResponseEntity<Void> update(@Valid @RequestBody ClienteDTO objDto, @PathVariable Integer id){
+
+	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+	public ResponseEntity<Void> update(@Valid @RequestBody ClienteDTO objDto, @PathVariable Integer id) {
 		Cliente obj = service.fromDTO(objDto);
 		obj.setId(id);
 		obj = service.update(obj);
 		return ResponseEntity.noContent().build();
 	}
-	
+
 	@PreAuthorize("hasAnyRole('ADMIN')")
-	@RequestMapping(value = "/{id}",  method = RequestMethod.DELETE)
-	public ResponseEntity<Void> delete(@PathVariable Integer id){
+	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+	public ResponseEntity<Void> delete(@PathVariable Integer id) {
 		service.delete(id);
 		return ResponseEntity.noContent().build();
 	}
-	
+
 	@PreAuthorize("hasAnyRole('ADMIN')")
 	@RequestMapping(method = RequestMethod.GET)
-	public ResponseEntity<List <ClienteDTO>> findAll() {
-		
-		List <Cliente> list = service.findAll();
-		List <ClienteDTO> listDto = 
-				list
-				.stream()
-				.map(obj -> new ClienteDTO(obj))
-				.collect(Collectors.toList());
+	public ResponseEntity<List<ClienteDTO>> findAll() {
+		List<Cliente> list = service.findAll();
+		List<ClienteDTO> listDto = list.stream().map(obj -> new ClienteDTO(obj)).collect(Collectors.toList());
 		return ResponseEntity.ok().body(listDto);
 	}
-	
+
 	@PreAuthorize("hasAnyRole('ADMIN')")
 	@RequestMapping(value = "/page", method = RequestMethod.GET)
-	public ResponseEntity<Page <ClienteDTO>> findPage(
-			@RequestParam(value = "page", defaultValue = "0") Integer page, 
-			@RequestParam(value = "linesPerPage", defaultValue = "24") Integer linesPerPage, 
-			@RequestParam(value = "orderBy", defaultValue = "nome") String orderBy, 
+	public ResponseEntity<Page<ClienteDTO>> findPage(@RequestParam(value = "page", defaultValue = "0") Integer page,
+			@RequestParam(value = "linesPerPage", defaultValue = "24") Integer linesPerPage,
+			@RequestParam(value = "orderBy", defaultValue = "nome") String orderBy,
 			@RequestParam(value = "direction", defaultValue = "ASC") String direction) {
-		
-		Page <Cliente> list = service.findPage(page, linesPerPage, orderBy, direction);
-		Page <ClienteDTO> listDto = list.map(obj -> new ClienteDTO(obj));
+		Page<Cliente> list = service.findPage(page, linesPerPage, orderBy, direction);
+		Page<ClienteDTO> listDto = list.map(obj -> new ClienteDTO(obj));
 		return ResponseEntity.ok().body(listDto);
 	}
 }

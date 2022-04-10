@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import br.com.fabio.curso.services.exceptions.AuthorizationException;
 import br.com.fabio.curso.services.exceptions.DataIntegrityException;
 import br.com.fabio.curso.services.exceptions.ObjectNotFoundException;
 
@@ -40,5 +41,13 @@ public class ResourceExceptionHandler {
 			err.addError(x.getField(), x.getDefaultMessage());
 		}
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
+	}
+	
+
+	@ExceptionHandler(AuthorizationException.class)
+	public ResponseEntity<StandarError> authorization(AuthorizationException e, HttpServletRequest request){
+		
+		StandarError err = new StandarError(HttpStatus.FORBIDDEN.value() , e.getMessage() , System.currentTimeMillis());
+		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(err);
 	}
 }

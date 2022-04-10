@@ -17,12 +17,15 @@ import br.com.fabio.curso.domain.Categoria;
 import br.com.fabio.curso.domain.Cidade;
 import br.com.fabio.curso.domain.Cliente;
 import br.com.fabio.curso.domain.Endereco;
+import br.com.fabio.curso.domain.enums.Perfil;
 import br.com.fabio.curso.domain.enums.TipoCliente;
 import br.com.fabio.curso.dto.ClienteDTO;
 import br.com.fabio.curso.dto.ClienteNewDTO;
 import br.com.fabio.curso.repositories.CidadeRepository;
 import br.com.fabio.curso.repositories.ClienteRepository;
 import br.com.fabio.curso.repositories.EnderecoRepository;
+import br.com.fabio.curso.security.UserSS;
+import br.com.fabio.curso.services.exceptions.AuthorizationException;
 import br.com.fabio.curso.services.exceptions.DataIntegrityException;
 import br.com.fabio.curso.services.exceptions.ObjectNotFoundException;
 
@@ -39,6 +42,13 @@ public class ClienteService {
 	private BCryptPasswordEncoder pe;
 	
 	public Cliente find(Integer id) {
+		
+		UserSS user = UserService.authenticated();
+		if(user == null || !user.hasRole(Perfil.ADMIN) && !id.equals(user.getId())) {
+			
+			throw new AuthorizationException("Acesso negado");
+		}
+		
 		Optional<Cliente> obj = repo.findById(id);
 		return obj.orElseThrow(() -> new ObjectNotFoundException(
 				"Objeto não encontrado! Id: " + id + ", Tipo: "
