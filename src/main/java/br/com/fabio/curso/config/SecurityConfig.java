@@ -27,7 +27,6 @@ import br.com.fabio.curso.security.JWTUtil;
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-
 	@Autowired
 	private UserDetailsService userDetailsService;
 
@@ -38,10 +37,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	private JWTUtil jwtUtil;
 
 	private static final String[] PUBLIC_MATCHERS = { "/h2-console/**" };
+	private static final String[] PUBLIC_MATCHERS_GET = { "/produtos/**", "/categorias/**" };
 
-	private static final String[] PUBLIC_MATCHERS_GET = { "/produtos/**", "/categorias/**", "/categorias/**" };
-
-	private static final String[] PUBLIC_MATCHERS_POST = { "/clientes/**" };
+	private static final String[] PUBLIC_MATCHERS_POST = {
+			"/clientes/**",
+			"/auth/forgot/**"
+	};
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
